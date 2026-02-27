@@ -19,13 +19,13 @@ const UserSchema = new Schema<IUser>({
     deletedAt: Date,
 });
 
-export const User = mongoose.model<IUser>('User', UserSchema);
+export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
 // ─── User Context (UCO — versioned document) ─────────────────────
 export interface IUserContext extends Document {
     userId: mongoose.Types.ObjectId;
     version: number;
-    data: Record<string, any>; // The full UCO JSONB-equivalent
+    data: Record<string, any>;
     isCurrent: boolean;
     createdAt: Date;
 }
@@ -41,7 +41,7 @@ const UserContextSchema = new Schema<IUserContext>({
 UserContextSchema.index({ userId: 1, isCurrent: 1 });
 UserContextSchema.index({ userId: 1, version: 1 }, { unique: true });
 
-export const UserContext = mongoose.model<IUserContext>('UserContext', UserContextSchema);
+export const UserContext = mongoose.models.UserContext || mongoose.model<IUserContext>('UserContext', UserContextSchema);
 
 // ─── Plans ────────────────────────────────────────────────────────
 export interface IPlan extends Document {
@@ -66,7 +66,7 @@ const PlanSchema = new Schema<IPlan>({
 
 PlanSchema.index({ userId: 1, generatedAt: -1 });
 
-export const Plan = mongoose.model<IPlan>('Plan', PlanSchema);
+export const Plan = mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);
 
 // ─── Workout Logs ─────────────────────────────────────────────────
 export interface IWorkoutLog extends Document {
@@ -98,7 +98,7 @@ const WorkoutLogSchema = new Schema<IWorkoutLog>({
 
 WorkoutLogSchema.index({ userId: 1, date: -1 });
 
-export const WorkoutLog = mongoose.model<IWorkoutLog>('WorkoutLog', WorkoutLogSchema);
+export const WorkoutLog = mongoose.models.WorkoutLog || mongoose.model<IWorkoutLog>('WorkoutLog', WorkoutLogSchema);
 
 // ─── Nutrition Logs ───────────────────────────────────────────────
 export interface INutritionLog extends Document {
@@ -128,7 +128,7 @@ const NutritionLogSchema = new Schema<INutritionLog>({
 
 NutritionLogSchema.index({ userId: 1, date: -1 });
 
-export const NutritionLog = mongoose.model<INutritionLog>('NutritionLog', NutritionLogSchema);
+export const NutritionLog = mongoose.models.NutritionLog || mongoose.model<INutritionLog>('NutritionLog', NutritionLogSchema);
 
 // ─── Foods (Regional) ─────────────────────────────────────────────
 export interface IFood extends Document {
@@ -163,7 +163,7 @@ const FoodSchema = new Schema<IFood>({
 
 FoodSchema.index({ name: 'text', nameLocal: 'text' });
 
-export const Food = mongoose.model<IFood>('Food', FoodSchema);
+export const Food = mongoose.models.Food || mongoose.model<IFood>('Food', FoodSchema);
 
 // ─── Exercises ────────────────────────────────────────────────────
 export interface IExercise extends Document {
@@ -192,7 +192,7 @@ const ExerciseSchema = new Schema<IExercise>({
     spaceRequired: { type: String, enum: ['minimal', 'medium', 'full'], default: 'medium' },
 });
 
-export const Exercise = mongoose.model<IExercise>('Exercise', ExerciseSchema);
+export const Exercise = mongoose.models.Exercise || mongoose.model<IExercise>('Exercise', ExerciseSchema);
 
 // ─── Check-Ins ────────────────────────────────────────────────────
 export interface ICheckIn extends Document {
@@ -221,7 +221,7 @@ const CheckInSchema = new Schema<ICheckIn>({
 
 CheckInSchema.index({ userId: 1, date: -1 });
 
-export const CheckIn = mongoose.model<ICheckIn>('CheckIn', CheckInSchema);
+export const CheckIn = mongoose.models.CheckIn || mongoose.model<ICheckIn>('CheckIn', CheckInSchema);
 
 // ─── Coach Messages ──────────────────────────────────────────────
 export interface ICoachMessage extends Document {
@@ -242,7 +242,7 @@ const CoachMessageSchema = new Schema<ICoachMessage>({
 
 CoachMessageSchema.index({ userId: 1, createdAt: -1 });
 
-export const CoachMessage = mongoose.model<ICoachMessage>('CoachMessage', CoachMessageSchema);
+export const CoachMessage = mongoose.models.CoachMessage || mongoose.model<ICoachMessage>('CoachMessage', CoachMessageSchema);
 
 // ─── Streaks ──────────────────────────────────────────────────────
 export interface IStreak extends Document {
@@ -267,7 +267,7 @@ const StreakSchema = new Schema<IStreak>({
     updatedAt: { type: Date, default: Date.now },
 });
 
-export const Streak = mongoose.model<IStreak>('Streak', StreakSchema);
+export const Streak = mongoose.models.Streak || mongoose.model<IStreak>('Streak', StreakSchema);
 
 // ─── Milestones ──────────────────────────────────────────────────
 export interface IMilestone extends Document {
@@ -290,4 +290,4 @@ const MilestoneSchema = new Schema<IMilestone>({
 
 MilestoneSchema.index({ userId: 1, achievedAt: -1 });
 
-export const Milestone = mongoose.model<IMilestone>('Milestone', MilestoneSchema);
+export const Milestone = mongoose.models.Milestone || mongoose.model<IMilestone>('Milestone', MilestoneSchema);
