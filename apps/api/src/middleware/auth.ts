@@ -6,9 +6,12 @@ import { User } from '../models/index';
 const JWT_SECRET = process.env.JWT_SECRET || 'urja-dev-secret-change-in-production';
 const JWT_EXPIRY = '7d';
 
-export interface AuthRequest extends Request {
+export interface AuthRequest {
     userId?: string;
     userEmail?: string;
+    headers: Record<string, string | string[] | undefined>;
+    body: any;
+    [key: string]: any;
 }
 
 /**

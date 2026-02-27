@@ -14,14 +14,25 @@ import { coachingRouter } from './modules/coaching/router';
 import { progressRouter } from './modules/progress/router';
 import { privacyRouter } from './modules/privacy/router';
 
-dotenv.config(); // loads apps/api/.env by default
+dotenv.config();
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+const app: any = express();
+
+// ─── DB Connection (cached for serverless) ──────────────────────
+let dbConnected = false;
+async function ensureDB() {
+    if (!dbConnected) {
+        await connectDB();
+        dbConnected = true;
+    }
+}
 
 // ─── Global Middleware ───────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 const globalLimiter = rateLimit({
@@ -33,8 +44,14 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
+// ─── DB Connection Middleware (MUST be before routes) ────────────
+app.use(async (_req: any, _res: any, next: any) => {
+    try { await ensureDB(); next(); }
+    catch (err) { next(err); }
+});
+
 // ─── Health Check ────────────────────────────────────────────────
-app.get('/health', (_req, res) => {
+app.get('/health', (_req: any, res: any) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '1.0.0' });
 });
 
@@ -54,7 +71,7 @@ app.use('/api/progress', progressRouter);
 app.use('/api/privacy', privacyRouter);
 
 // ─── 404 Handler ─────────────────────────────────────────────────
-app.use((_req, res) => {
+app.use((_req: any, res: any) => {
     res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Route not found' } });
 });
 
@@ -65,21 +82,6 @@ app.use((err: Error, _req: any, res: any, _next: any) => {
         success: false,
         error: { code: 'INTERNAL_ERROR', message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error' },
     });
-});
-
-// ─── DB Connection (cached for serverless) ──────────────────────
-let dbConnected = false;
-async function ensureDB() {
-    if (!dbConnected) {
-        await connectDB();
-        dbConnected = true;
-    }
-}
-
-// Connect on every request (serverless-safe, idempotent)
-app.use(async (_req, _res, next) => {
-    try { await ensureDB(); next(); }
-    catch (err) { next(err); }
 });
 
 // ─── Start (local dev only, skipped on Vercel) ──────────────────
