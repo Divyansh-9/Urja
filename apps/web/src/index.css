@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #0a0a0f;
+    color: rgba(255, 255, 255, 0.92);
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background: rgba(0, 229, 160, 0.25);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@layer components {
+  /* ─── Glass Card ────────────────────────── */
+  .glass-card {
+    @apply bg-glass-light backdrop-blur-[20px] border border-glass-border rounded-glass shadow-glass;
+  }
+
+  .glass-card-interactive {
+    @apply glass-card transition-all duration-200 hover:bg-glass-medium hover:border-accent-primary/20 hover:shadow-glow-mint;
+  }
+
+  /* ─── Pill Button ──────────────────────── */
+  .btn-primary {
+    @apply px-6 py-2.5 bg-accent-primary text-surface-900 font-semibold rounded-pill
+           transition-all duration-200 hover:shadow-glow-mint hover:brightness-110
+           active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-glass-light border border-glass-border text-white/90 font-medium rounded-pill
+           transition-all duration-200 hover:bg-glass-medium hover:border-accent-primary/30
+           active:scale-[0.97];
+  }
+
+  .btn-danger {
+    @apply px-6 py-2.5 bg-accent-danger/10 border border-accent-danger/30 text-accent-danger font-medium rounded-pill
+           transition-all duration-200 hover:bg-accent-danger/20
+           active:scale-[0.97];
+  }
+
+  /* ─── Input ────────────────────────────── */
+  .input-glass {
+    @apply w-full px-4 py-3 bg-glass-light border border-glass-border rounded-card
+           text-white/90 placeholder:text-white/30
+           outline-none transition-all duration-200
+           focus:border-accent-primary/40 focus:shadow-glow-mint focus:bg-glass-medium;
+  }
+
+  .select-glass {
+    @apply input-glass appearance-none cursor-pointer;
+  }
+
+  /* ─── Stat Chip ────────────────────────── */
+  .stat-chip {
+    @apply inline-flex items-center gap-2 px-4 py-2 glass-card text-caption;
+  }
+
+  /* ─── Macro Ring (label) ────────────────── */
+  .macro-label {
+    @apply text-micro uppercase tracking-widest text-white/50;
+  }
+
+  /* ─── Ambient Orbs ─────────────────────── */
+  .orb {
+    @apply fixed rounded-full blur-[100px] opacity-20 pointer-events-none;
+  }
+  .orb-mint {
+    @apply orb bg-accent-primary w-[300px] h-[300px] -top-20 -right-20;
+  }
+  .orb-cyan {
+    @apply orb bg-accent-secondary w-[250px] h-[250px] bottom-20 -left-20;
+  }
+
+  /* ─── Page Container ───────────────────── */
+  .page {
+    @apply min-h-screen px-4 py-8 pb-24 md:px-8 max-w-5xl mx-auto relative;
+  }
+
+  /* ─── Nav Tab ──────────────────────────── */
+  .nav-tab {
+    @apply flex flex-col items-center gap-1 py-2 px-3 text-micro text-white/40
+           transition-all duration-200 hover:text-white/70;
+  }
+  .nav-tab-active {
+    @apply nav-tab text-accent-primary;
+  }
+}

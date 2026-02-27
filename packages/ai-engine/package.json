@@ -1,0 +1,19 @@
+{
+    "name": "@fitmind/ai-engine",
+    "version": "1.0.0",
+    "private": true,
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@fitmind/shared-types": "workspace:*",
+        "@anthropic-ai/sdk": "^0.25.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.4.0",
+        "vitest": "^1.6.0"
+    }
+}

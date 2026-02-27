@@ -1,0 +1,20 @@
+{
+  "name": "urja",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Urja — Personalized Workout & Diet Planner for Students",
+  "scripts": {
+    "dev": "pnpm --filter @fitmind/web dev & pnpm --filter @fitmind/api dev",
+    "dev:web": "pnpm --filter @fitmind/web dev",
+    "dev:api": "pnpm --filter @fitmind/api dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "seed:foods": "pnpm --filter @fitmind/api seed:foods",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
