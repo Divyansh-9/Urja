@@ -17,6 +17,7 @@ import { privacyRouter } from './modules/privacy/router';
 dotenv.config();
 
 const app: any = express();
+app.set('trust proxy', 1); // Trust Vercel's reverse proxy for rate limiting
 
 // ─── DB Connection (cached for serverless) ──────────────────────
 let dbConnected = false;
