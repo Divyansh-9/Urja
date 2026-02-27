@@ -59,7 +59,7 @@ app.use((_req, res) => {
 });
 
 // ─── Error Handler ──────────────────────────────────────────────
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: Error, _req: any, res: any, _next: any) => {
     console.error('Unhandled error:', err);
     res.status(500).json({
         success: false,

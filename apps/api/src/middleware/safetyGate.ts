@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+// Express types handled via 'any' for Vercel TS 5.9 compat
 import type { AuthRequest } from './auth';
 import type { UserContextObject, SafetyGateResult } from '@fitmind/shared-types';
 
@@ -155,7 +155,7 @@ export function runSafetyGate(uco: UserContextObject): SafetyGateResult {
 /**
  * Safety Gate middleware — runs on plan generation routes.
  */
-export function safetyGateMiddleware(req: UCORequest, res: Response, next: NextFunction) {
+export function safetyGateMiddleware(req: UCORequest, res: any, next: any) {
     if (!req.uco) return next();
 
     const safety = runSafetyGate(req.uco);

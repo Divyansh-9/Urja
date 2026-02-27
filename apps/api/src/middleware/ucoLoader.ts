@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+// Express types handled via 'any' for Vercel TS 5.9 compat
 import type { AuthRequest } from './auth';
 import type { UserContextObject } from '@fitmind/shared-types';
 import { UserContext } from '../models/index';
@@ -13,7 +13,7 @@ const ucoCache = new Map<string, UserContextObject>();
 /**
  * UCO Loader middleware — fetches the user's current UCO and attaches to request.
  */
-export async function ucoLoaderMiddleware(req: UCORequest, res: Response, next: NextFunction) {
+export async function ucoLoaderMiddleware(req: UCORequest, _res: any, next: any) {
     if (!req.userId) return next();
 
     // Check in-memory cache first

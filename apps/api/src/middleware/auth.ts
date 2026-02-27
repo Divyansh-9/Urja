@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { User } from '../models/index';
@@ -15,7 +15,7 @@ export interface AuthRequest extends Request {
  * Auth middleware: verify JWT and attach user to request.
  * Falls back to dev user when in development mode.
  */
-export async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+export async function authMiddleware(req: AuthRequest, res: any, next: any) {
     // Dev mode fallback
     if (process.env.NODE_ENV === 'development' && !req.headers.authorization) {
         req.userId = 'dev-user-001';
