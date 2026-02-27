@@ -125,7 +125,7 @@ export function calculateOverload(
 ): OverloadTargets {
     const lastTwoSessions = history.logs.slice(-2);
     const hitTopOfRange = lastTwoSessions.length >= 2 &&
-        lastTwoSessions.every((log) => log.reps >= 12 && log.energyLevel >= 3);
+        lastTwoSessions.every((log) => log.repsAchieved >= 12 && log.energyLevel >= 3);
 
     if (hasWeights) {
         // Weight-based linear progression

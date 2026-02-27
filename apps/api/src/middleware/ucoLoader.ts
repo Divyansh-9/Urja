@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import type { AuthRequest } from './auth';
 import type { UserContextObject } from '@fitmind/shared-types';
 import { UserContext } from '../models/index';

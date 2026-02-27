@@ -6,6 +6,8 @@ export interface Exercise {
     muscleGroups: string[];
     equipmentRequired: Equipment[];
     difficulty: 1 | 2 | 3 | 4 | 5;
+    noiseLevel: NoiseLevel;
+    spaceRequired: SpaceRequired;
     tags: string[];
     videoRef?: string;
     contraindicatedConditions: string[];
