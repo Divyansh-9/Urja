@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { User } from '../models/index';
@@ -9,8 +8,6 @@ const JWT_EXPIRY = '7d';
 export interface AuthRequest {
     userId?: string;
     userEmail?: string;
-    headers: Record<string, string | string[] | undefined>;
-    body: any;
     [key: string]: any;
 }
 
@@ -18,15 +15,15 @@ export interface AuthRequest {
  * Auth middleware: verify JWT and attach user to request.
  * Falls back to dev user when in development mode.
  */
-export async function authMiddleware(req: AuthRequest, res: any, next: any) {
+export async function authMiddleware(req: any, res: any, next: any) {
     // Dev mode fallback
-    if (process.env.NODE_ENV === 'development' && !req.headers.authorization) {
+    if (process.env.NODE_ENV === 'development' && !req.headers?.authorization) {
         req.userId = 'dev-user-001';
         req.userEmail = 'dev@urja.local';
         return next();
     }
 
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers?.authorization as string | undefined;
     if (!authHeader?.startsWith('Bearer ')) {
         return res.status(401).json({
             success: false,
@@ -37,7 +34,7 @@ export async function authMiddleware(req: AuthRequest, res: any, next: any) {
     const token = authHeader.slice(7);
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+        const decoded = jwt.verify(token, JWT_SECRET) as unknown as { userId: string; email: string };
         req.userId = decoded.userId;
         req.userEmail = decoded.email;
         next();
