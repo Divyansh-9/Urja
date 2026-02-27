@@ -6,12 +6,6 @@ export default defineConfig({
     outDir: 'dist',
     target: 'node18',
     clean: true,
-    noExternal: [
-        '@fitmind/shared-types',
-        '@fitmind/user-context',
-        '@fitmind/workout-engine',
-        '@fitmind/nutrition-db',
-        '@fitmind/ai-engine',
-    ],
-    skipNodeModulesBundle: true,
+    noExternal: [/.*/],
+    external: [],
 });
