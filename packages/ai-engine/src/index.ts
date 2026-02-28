@@ -113,6 +113,7 @@ async function callWithRetry<T>(
 function validateWorkoutPlan(
     plan: Record<string, unknown>,
     allowedExerciseIds: string[],
+    maxSessionMins?: number,
 ): ValidationResult {
     const errors: ValidationResult['errors'] = [];
 
@@ -123,6 +124,15 @@ function validateWorkoutPlan(
 
     const days = plan.days as Array<Record<string, unknown>>;
     for (const day of days) {
+        // Validate duration constraint
+        if (maxSessionMins && typeof day.durationMins === 'number' && day.durationMins > maxSessionMins) {
+            errors.push({
+                field: `day.${day.dayName}.durationMins`,
+                message: `Session duration ${day.durationMins} exceeds max of ${maxSessionMins} minutes. Reduce exercises or rest times.`,
+                code: 'DURATION_EXCEEDED',
+            });
+        }
+
         const exercises = day.exercises as Array<Record<string, unknown>> | undefined;
         if (!exercises) continue;
 
@@ -179,7 +189,7 @@ export async function generateWorkoutPlan(context: PlanContext): Promise<Workout
         system,
         user,
         TOKEN_BUDGETS.workout_plan_generation.output,
-        (plan) => validateWorkoutPlan(plan, context.constraints.allowedExerciseIds),
+        (plan) => validateWorkoutPlan(plan, context.constraints.allowedExerciseIds, context.constraints.sessionLengthMins),
     );
 
     return {

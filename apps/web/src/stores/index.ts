@@ -117,6 +117,7 @@ interface PlanState {
     fetchCurrent: () => Promise<void>;
     generate: (type: string) => Promise<void>;
     fetchHistory: () => Promise<void>;
+    hydratePlan: () => void;
 }
 
 export const usePlanStore = create<PlanState>((set) => ({
@@ -125,9 +126,19 @@ export const usePlanStore = create<PlanState>((set) => ({
     generating: false,
     safetyWarnings: [],
 
+    hydratePlan: () => {
+        try {
+            const cached = localStorage.getItem('urja_current_plan');
+            if (cached) {
+                set({ currentPlan: JSON.parse(cached) });
+            }
+        } catch { /* ignore parse errors */ }
+    },
+
     fetchCurrent: async () => {
         try {
             const plan = await api.getCurrentPlan();
+            localStorage.setItem('urja_current_plan', JSON.stringify(plan));
             set({ currentPlan: plan });
         } catch {
             set({ currentPlan: null });
@@ -138,6 +149,7 @@ export const usePlanStore = create<PlanState>((set) => ({
         set({ generating: true });
         try {
             const result = await api.generatePlan(type);
+            localStorage.setItem('urja_current_plan', JSON.stringify(result));
             set({
                 currentPlan: result,
                 generating: false,

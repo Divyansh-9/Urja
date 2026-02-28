@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAuthStore, useOnboardingStore } from './stores';
+import { useAuthStore, useOnboardingStore, usePlanStore } from './stores';
 import Layout from './components/Layout';
 import AuthPage from './pages/AuthPage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -22,10 +22,12 @@ export default function App() {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
     const checkOnboarding = useOnboardingStore((s) => s.checkStatus);
     const onboardingComplete = useOnboardingStore((s) => s.complete);
+    const hydratePlan = usePlanStore((s) => s.hydratePlan);
 
     useEffect(() => {
         hydrate();
-    }, [hydrate]);
+        hydratePlan();
+    }, [hydrate, hydratePlan]);
 
     useEffect(() => {
         if (isAuthenticated) checkOnboarding();
