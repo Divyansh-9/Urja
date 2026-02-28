@@ -249,10 +249,10 @@ export default function OnboardingPage() {
                 {/* Step Title */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <p className="text-micro text-accent-primary">Step {currentStep} of 6</p>
-                        <h2 className="text-heading">{STEP_TITLES[currentStep]}</h2>
+                        <p className="text-micro text-accent-primary">Step {Math.min(currentStep, 6)} of 6</p>
+                        <h2 className="text-heading">{STEP_TITLES[Math.min(currentStep, 6)]}</h2>
                     </div>
-                    <span className="text-micro text-white/30">{Math.round((currentStep / 6) * 100)}%</span>
+                    <span className="text-micro text-white/30">{Math.round((Math.min(currentStep, 6) / 6) * 100)}%</span>
                 </div>
 
                 {/* Form */}
