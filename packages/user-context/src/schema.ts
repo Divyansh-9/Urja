@@ -134,6 +134,7 @@ export const UCOSchema = z.object({
         moodHistory: z.array(MoodLogSchema),
         progressPhotos: z.array(z.string()),
         measurements: z.array(MeasurementLogSchema),
+        activeTrack: z.enum(['standard', 'exam_survival', 'rehab', '90_day_bulk']).default('standard'),
     }),
 
     privacy: z.object({

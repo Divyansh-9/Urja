@@ -49,6 +49,12 @@ export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
 export type PlanType = 'workout' | 'nutrition' | 'combined';
 
+export type TrackType = 'standard' | 'exam_survival' | 'rehab' | '90_day_bulk';
+
+export type FriendRequestStatus = 'pending' | 'accepted' | 'rejected';
+
+export type ActivityAction = 'logged_workout' | 'achieved_streak' | 'generated_plan' | 'completed_week' | 'joined_track';
+
 export type PortionSize = 'small' | 'medium' | 'large';
 
 export type RoomType = 'single' | 'shared' | 'dorm';

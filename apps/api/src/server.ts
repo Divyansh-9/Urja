@@ -14,6 +14,7 @@ import { loggingRouter } from './modules/logging/router';
 import { coachingRouter } from './modules/coaching/router';
 import { progressRouter } from './modules/progress/router';
 import { privacyRouter } from './modules/privacy/router';
+import { socialRouter } from './modules/social/router';
 
 dotenv.config();
 
@@ -72,6 +73,7 @@ app.use('/api/log', loggingRouter);
 app.use('/api/coaching', coachingRouter);
 app.use('/api/progress', progressRouter);
 app.use('/api/privacy', privacyRouter);
+app.use('/api/social', socialRouter);
 
 // ─── 404 Handler ─────────────────────────────────────────────────
 app.use((_req: any, res: any) => {

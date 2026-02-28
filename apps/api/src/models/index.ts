@@ -1,23 +1,45 @@
 import mongoose, { Schema, type Document } from 'mongoose';
 
 // ─── User ─────────────────────────────────────────────────────────
+export interface IFriendRequest {
+    fromUserId: mongoose.Types.ObjectId;
+    status: 'pending' | 'accepted' | 'rejected';
+    createdAt: Date;
+}
+
 export interface IUser extends Document {
     email: string;
     passwordHash: string;
     fullName?: string;
+    username?: string;
     avatarUrl?: string;
+    friends: mongoose.Types.ObjectId[];
+    friendRequests: IFriendRequest[];
+    activeTrack: 'standard' | 'exam_survival' | 'rehab' | '90_day_bulk';
     createdAt: Date;
     deletedAt?: Date;
 }
+
+const FriendRequestSubSchema = new Schema({
+    fromUserId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+    createdAt: { type: Date, default: Date.now },
+}, { _id: true });
 
 const UserSchema = new Schema<IUser>({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
     fullName: String,
+    username: { type: String, unique: true, sparse: true, lowercase: true, trim: true, minlength: 3, maxlength: 20 },
     avatarUrl: String,
+    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    friendRequests: [FriendRequestSubSchema],
+    activeTrack: { type: String, enum: ['standard', 'exam_survival', 'rehab', '90_day_bulk'], default: 'standard' },
     createdAt: { type: Date, default: Date.now },
     deletedAt: Date,
 });
+
+UserSchema.index({ username: 1 });
 
 export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
@@ -291,3 +313,26 @@ const MilestoneSchema = new Schema<IMilestone>({
 MilestoneSchema.index({ userId: 1, achievedAt: -1 });
 
 export const Milestone = mongoose.models.Milestone || mongoose.model<IMilestone>('Milestone', MilestoneSchema);
+
+// ─── Activity Feed ───────────────────────────────────────────────
+export interface IActivityFeed extends Document {
+    userId: mongoose.Types.ObjectId;
+    action: 'logged_workout' | 'achieved_streak' | 'generated_plan' | 'completed_week' | 'joined_track';
+    metadata: Record<string, any>;
+    createdAt: Date;
+}
+
+const ActivityFeedSchema = new Schema<IActivityFeed>({
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    action: {
+        type: String,
+        enum: ['logged_workout', 'achieved_streak', 'generated_plan', 'completed_week', 'joined_track'],
+        required: true,
+    },
+    metadata: { type: Schema.Types.Mixed, default: {} },
+    createdAt: { type: Date, default: Date.now },
+});
+
+ActivityFeedSchema.index({ userId: 1, createdAt: -1 });
+
+export const ActivityFeed = mongoose.models.ActivityFeed || mongoose.model<IActivityFeed>('ActivityFeed', ActivityFeedSchema);

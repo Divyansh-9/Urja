@@ -4,7 +4,7 @@ import { safetyGateMiddleware } from '../../middleware/safetyGate';
 import { generateWorkoutPlan, generateNutritionPlan } from '@fitmind/ai-engine';
 import { getEligibleExercises, buildPlanSkeleton } from '@fitmind/workout-engine';
 import { computeCaloricTarget, computeMacroTargets } from '@fitmind/user-context';
-import { Plan, Exercise, Food } from '../../models/index';
+import { Plan, Exercise, Food, User, ActivityFeed } from '../../models/index';
 import type { PlanContext } from '@fitmind/shared-types';
 
 export const plansRouter = Router();
@@ -27,20 +27,38 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
 
         const safetyResult = (req as any).safetyResult;
 
+        // ─── Track Override Logic ────────────────────────────────
+        const userDoc = await User.findById(req.userId).lean() as any;
+        const activeTrack = userDoc?.activeTrack || 'standard';
+
         // Pre-filter exercises from DB (not AI)
         const allExercises = await Exercise.find().lean();
         const excludedTags = safetyResult?.requiredModifications
             ?.filter((m: any) => m.type === 'restrict_exercises')
             ?.flatMap((m: any) => m.params?.excludeTags || []) || [];
 
+        let sessionLengthOverride = uco.lifestyle.sessionLengthMins;
+        let daysPerWeekOverride = uco.lifestyle.workoutDaysPerWeek;
+        let isExamWeekOverride = false;
+
+        if (activeTrack === 'exam_survival') {
+            sessionLengthOverride = 15;
+            daysPerWeekOverride = Math.min(daysPerWeekOverride, 3);
+            isExamWeekOverride = true;
+            excludedTags.push('high_impact', 'jump', 'advanced', 'plyometric');
+        } else if (activeTrack === '90_day_bulk') {
+            sessionLengthOverride = Math.max(sessionLengthOverride, 60);
+            daysPerWeekOverride = Math.max(daysPerWeekOverride, 5);
+        }
+
         const constraints = {
             equipmentAvailable: uco.environment.equipmentAvailable as any[],
             excludedTags,
-            excludedBodyParts: uco.health.injuries.filter((i) => i.isActive).map((i) => i.bodyPart),
+            excludedBodyParts: uco.health.injuries.filter((i: any) => i.isActive).map((i: any) => i.bodyPart),
             noiseLevel: (uco.environment.setting === 'hostel' ? 'low' : 'normal') as any,
             spaceRequired: (uco.environment.setting === 'hostel' ? 'minimal' : 'medium') as any,
             difficultyMin: 1,
-            difficultyMax: uco.adaptive.weekNumber < 4 ? 3 : 5,
+            difficultyMax: activeTrack === 'exam_survival' ? 2 : (uco.adaptive.weekNumber < 4 ? 3 : 5),
         };
 
         const eligibleExercises = getEligibleExercises(allExercises as any[], constraints);
@@ -61,11 +79,11 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
                 weekNumber: uco.adaptive.weekNumber + 1,
             },
             constraints: {
-                allowedExerciseIds: eligibleExercises.map((e) => e.id),
+                allowedExerciseIds: eligibleExercises.map((e: any) => e.id),
                 excludedExerciseIds: [],
-                allowedFoodIds: allFoods.map((f) => f._id.toString()),
-                sessionLengthMins: uco.lifestyle.sessionLengthMins,
-                daysPerWeek: uco.lifestyle.workoutDaysPerWeek,
+                allowedFoodIds: allFoods.map((f: any) => f._id.toString()),
+                sessionLengthMins: sessionLengthOverride,
+                daysPerWeek: daysPerWeekOverride,
                 equipmentList: uco.environment.equipmentAvailable,
                 dailyFoodBudget: uco.nutrition.dailyFoodBudget,
             },
@@ -75,7 +93,7 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
                 dietType: uco.nutrition.dietType,
                 hasKitchen: uco.environment.hasKitchen,
                 hasMess: uco.environment.hasMess,
-                isExamWeek: uco.lifestyle.examPeriods.some((ep) => {
+                isExamWeek: isExamWeekOverride || uco.lifestyle.examPeriods.some((ep: any) => {
                     const now = new Date();
                     return new Date(ep.start) <= now && now <= new Date(ep.end);
                 }),
@@ -83,7 +101,7 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
             history: {
                 adherenceRate: uco.adaptive.adherenceRate,
                 avgEnergyLevel: uco.adaptive.energyLevelHistory.length > 0
-                    ? uco.adaptive.energyLevelHistory.slice(-7).reduce((s, e) => s + e.level, 0) / Math.min(uco.adaptive.energyLevelHistory.length, 7)
+                    ? uco.adaptive.energyLevelHistory.slice(-7).reduce((s: any, e: any) => s + e.level, 0) / Math.min(uco.adaptive.energyLevelHistory.length, 7)
                     : 3,
                 recentSkippedExerciseIds: [],
                 recentDislikedMeals: [],
