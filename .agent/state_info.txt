@@ -1,0 +1,17 @@
+{
+  "name": "urja",
+  "version": "1.0.0",
+  "stack": [
+    "TypeScript"
+  ],
+  "scripts": [
+    "dev",
+    "dev:web",
+    "dev:api",
+    "build",
+    "test",
+    "lint",
+    "seed:foods",
+    "typecheck"
+  ]
+}

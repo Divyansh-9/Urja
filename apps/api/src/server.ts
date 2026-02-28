@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './lib/db';
+import { seedDatabase } from './scripts/seed';
 import { authMiddleware } from './middleware/auth';
 import { ucoLoaderMiddleware } from './middleware/ucoLoader';
 import { authRouter } from './modules/auth/router';
@@ -24,6 +25,7 @@ let dbConnected = false;
 async function ensureDB() {
     if (!dbConnected) {
         await connectDB();
+        await seedDatabase();
         dbConnected = true;
     }
 }
