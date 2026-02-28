@@ -189,6 +189,7 @@ export const Food = mongoose.models.Food || mongoose.model<IFood>('Food', FoodSc
 
 // ─── Exercises ────────────────────────────────────────────────────
 export interface IExercise extends Document {
+    id: string;
     name: string;
     muscleGroups: string[];
     equipmentRequired: string[];
@@ -202,6 +203,7 @@ export interface IExercise extends Document {
 }
 
 const ExerciseSchema = new Schema<IExercise>({
+    id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     muscleGroups: { type: [String], required: true, index: true },
     equipmentRequired: { type: [String], default: [] },

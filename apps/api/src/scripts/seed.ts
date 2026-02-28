@@ -429,62 +429,55 @@ const seedExercises = [
 
 const seedFoods = [
     // ─── NORTH INDIA ─────────────────────────────────────────────
-    { name: 'Dal Tadka', regionCode: 'north_india', caloriesPer100g: 110, proteinPer100g: 5.5, carbsPer100g: 15, fatPer100g: 3, tags: ['vegetarian', 'mess_staple', 'lunch'] },
-    { name: 'Paneer Bhurji', regionCode: 'north_india', caloriesPer100g: 220, proteinPer100g: 14, carbsPer100g: 5, fatPer100g: 16, tags: ['vegetarian', 'high_protein', 'dinner'] },
-    { name: 'Wheat Roti', regionCode: 'north_india', caloriesPer100g: 297, proteinPer100g: 10, carbsPer100g: 60, fatPer100g: 2.5, tags: ['vegetarian', 'vegan', 'mess_staple', 'carbs'] },
-    { name: 'Chana Masala', regionCode: 'north_india', caloriesPer100g: 145, proteinPer100g: 6, carbsPer100g: 20, fatPer100g: 5, tags: ['vegetarian', 'vegan', 'mess_staple'] },
-    { name: 'Rajma', regionCode: 'north_india', caloriesPer100g: 130, proteinPer100g: 5.5, carbsPer100g: 18, fatPer100g: 4, tags: ['vegetarian', 'vegan', 'mess_staple'] },
-    { name: 'Chicken Curry', regionCode: 'north_india', caloriesPer100g: 160, proteinPer100g: 16, carbsPer100g: 4, fatPer100g: 9, tags: ['omnivore', 'high_protein'] },
+    { name: 'Dal Tadka', regionCode: 'north_india', caloriesPer100g: 110, proteinG: 5.5, carbsG: 15, fatG: 3, fiberG: 2, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'mess_staple', 'lunch'] },
+    { name: 'Paneer Bhurji', regionCode: 'north_india', caloriesPer100g: 220, proteinG: 14, carbsG: 5, fatG: 16, fiberG: 0, commonServingG: 100, isMessFood: false, tags: ['vegetarian', 'high_protein', 'dinner'] },
+    { name: 'Wheat Roti', regionCode: 'north_india', caloriesPer100g: 297, proteinG: 10, carbsG: 60, fatG: 2.5, fiberG: 4, commonServingG: 40, isMessFood: true, tags: ['vegetarian', 'vegan', 'mess_staple', 'carbs'] },
+    { name: 'Chana Masala', regionCode: 'north_india', caloriesPer100g: 145, proteinG: 6, carbsG: 20, fatG: 5, fiberG: 4, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'vegan', 'mess_staple'] },
+    { name: 'Rajma', regionCode: 'north_india', caloriesPer100g: 130, proteinG: 5.5, carbsG: 18, fatG: 4, fiberG: 5, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'vegan', 'mess_staple'] },
+    { name: 'Chicken Curry', regionCode: 'north_india', caloriesPer100g: 160, proteinG: 16, carbsG: 4, fatG: 9, fiberG: 0, commonServingG: 150, isMessFood: false, tags: ['omnivore', 'high_protein'] },
 
     // ─── SOUTH INDIA ─────────────────────────────────────────────
-    { name: 'Idli (Rice & Lentil)', regionCode: 'south_india', caloriesPer100g: 140, proteinPer100g: 4.5, carbsPer100g: 28, fatPer100g: 0.5, tags: ['vegetarian', 'vegan', 'breakfast', 'mess_staple'] },
-    { name: 'Plain Dosa', regionCode: 'south_india', caloriesPer100g: 170, proteinPer100g: 4, carbsPer100g: 32, fatPer100g: 3, tags: ['vegetarian', 'vegan', 'breakfast', 'dinner'] },
-    { name: 'Sambar', regionCode: 'south_india', caloriesPer100g: 75, proteinPer100g: 3, carbsPer100g: 12, fatPer100g: 2, tags: ['vegetarian', 'vegan', 'mess_staple'] },
-    { name: 'Upma', regionCode: 'south_india', caloriesPer100g: 135, proteinPer100g: 3.5, carbsPer100g: 22, fatPer100g: 4, tags: ['vegetarian', 'breakfast'] },
-    { name: 'Chicken Chettinad', regionCode: 'south_india', caloriesPer100g: 180, proteinPer100g: 15, carbsPer100g: 6, fatPer100g: 11, tags: ['omnivore', 'high_protein'] },
+    { name: 'Idli (Rice & Lentil)', regionCode: 'south_india', caloriesPer100g: 140, proteinG: 4.5, carbsG: 28, fatG: 0.5, fiberG: 1, commonServingG: 50, isMessFood: true, tags: ['vegetarian', 'vegan', 'breakfast', 'mess_staple'] },
+    { name: 'Plain Dosa', regionCode: 'south_india', caloriesPer100g: 170, proteinG: 4, carbsG: 32, fatG: 3, fiberG: 1, commonServingG: 80, isMessFood: true, tags: ['vegetarian', 'vegan', 'breakfast', 'dinner'] },
+    { name: 'Sambar', regionCode: 'south_india', caloriesPer100g: 75, proteinG: 3, carbsG: 12, fatG: 2, fiberG: 3, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'vegan', 'mess_staple'] },
+    { name: 'Upma', regionCode: 'south_india', caloriesPer100g: 135, proteinG: 3.5, carbsG: 22, fatG: 4, fiberG: 1, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'breakfast'] },
+    { name: 'Chicken Chettinad', regionCode: 'south_india', caloriesPer100g: 180, proteinG: 15, carbsG: 6, fatG: 11, fiberG: 0, commonServingG: 150, isMessFood: false, tags: ['omnivore', 'high_protein'] },
 
     // ─── EAST & WEST INDIA ───────────────────────────────────────
-    { name: 'Fish Curry (Macher Jhol)', regionCode: 'east_india', caloriesPer100g: 120, proteinPer100g: 14, carbsPer100g: 3, fatPer100g: 6, tags: ['omnivore', 'high_protein'] },
-    { name: 'Poha', regionCode: 'west_india', caloriesPer100g: 150, proteinPer100g: 3, carbsPer100g: 31, fatPer100g: 4, tags: ['vegetarian', 'vegan', 'breakfast'] },
-    { name: 'Dhokla', regionCode: 'west_india', caloriesPer100g: 160, proteinPer100g: 6, carbsPer100g: 24, fatPer100g: 4.5, tags: ['vegetarian', 'snack'] },
+    { name: 'Fish Curry (Macher Jhol)', regionCode: 'east_india', caloriesPer100g: 120, proteinG: 14, carbsG: 3, fatG: 6, fiberG: 0, commonServingG: 150, isMessFood: false, tags: ['omnivore', 'high_protein'] },
+    { name: 'Poha', regionCode: 'west_india', caloriesPer100g: 150, proteinG: 3, carbsG: 31, fatG: 4, fiberG: 1, commonServingG: 150, isMessFood: true, tags: ['vegetarian', 'vegan', 'breakfast'] },
+    { name: 'Dhokla', regionCode: 'west_india', caloriesPer100g: 160, proteinG: 6, carbsG: 24, fatG: 4.5, fiberG: 1, commonServingG: 100, isMessFood: false, tags: ['vegetarian', 'snack'] },
 
     // ─── GLOBAL / HOSTEL / NO COOK ───────────────────────────────
-    { name: 'White Rice (Cooked)', regionCode: 'global', caloriesPer100g: 130, proteinPer100g: 2.7, carbsPer100g: 28, fatPer100g: 0.3, tags: ['vegetarian', 'vegan', 'mess_staple', 'carbs'] },
-    { name: 'Boiled Egg', regionCode: 'global', caloriesPer100g: 155, proteinPer100g: 13, carbsPer100g: 1, fatPer100g: 11, tags: ['eggetarian', 'high_protein', 'snack', 'no_cook'] },
-    { name: 'Peanut Butter (Unsweetened)', regionCode: 'global', caloriesPer100g: 588, proteinPer100g: 25, carbsPer100g: 20, fatPer100g: 50, tags: ['vegetarian', 'vegan', 'high_protein', 'fats', 'no_cook'] },
-    { name: 'Whole Wheat Bread', regionCode: 'global', caloriesPer100g: 250, proteinPer100g: 10, carbsPer100g: 43, fatPer100g: 4, tags: ['vegetarian', 'vegan', 'carbs', 'no_cook'] },
-    { name: 'Rolled Oats (Raw)', regionCode: 'global', caloriesPer100g: 389, proteinPer100g: 16.9, carbsPer100g: 66, fatPer100g: 6.9, tags: ['vegetarian', 'vegan', 'breakfast', 'carbs', 'no_cook'] },
-    { name: 'Whey Protein Isolate', regionCode: 'global', caloriesPer100g: 375, proteinPer100g: 85, carbsPer100g: 3, fatPer100g: 1, tags: ['vegetarian', 'high_protein', 'supplement', 'no_cook'] },
-    { name: 'Soya Chunks (Dry)', regionCode: 'global', caloriesPer100g: 345, proteinPer100g: 52, carbsPer100g: 33, fatPer100g: 0.5, tags: ['vegetarian', 'vegan', 'high_protein', 'budget'] },
-    { name: 'Banana', regionCode: 'global', caloriesPer100g: 89, proteinPer100g: 1.1, carbsPer100g: 23, fatPer100g: 0.3, tags: ['vegetarian', 'vegan', 'snack', 'carbs', 'no_cook'] },
-    { name: 'Curd (Dahi)', regionCode: 'global', caloriesPer100g: 98, proteinPer100g: 11, carbsPer100g: 3.4, fatPer100g: 4.3, tags: ['vegetarian', 'snack', 'mess_staple', 'no_cook'] },
-    { name: 'Roasted Chana (Chickpeas)', regionCode: 'global', caloriesPer100g: 369, proteinPer100g: 21, carbsPer100g: 58, fatPer100g: 5, tags: ['vegetarian', 'vegan', 'snack', 'high_protein', 'no_cook'] },
-    { name: 'Milk (Toned)', regionCode: 'global', caloriesPer100g: 60, proteinPer100g: 3.3, carbsPer100g: 4.8, fatPer100g: 3, tags: ['vegetarian', 'breakfast', 'no_cook'] },
+    { name: 'White Rice (Cooked)', regionCode: 'global', caloriesPer100g: 130, proteinG: 2.7, carbsG: 28, fatG: 0.3, fiberG: 0.4, commonServingG: 200, isMessFood: true, tags: ['vegetarian', 'vegan', 'mess_staple', 'carbs'] },
+    { name: 'Boiled Egg', regionCode: 'global', caloriesPer100g: 155, proteinG: 13, carbsG: 1, fatG: 11, fiberG: 0, commonServingG: 50, isMessFood: false, tags: ['eggetarian', 'high_protein', 'snack', 'no_cook'] },
+    { name: 'Peanut Butter (Unsweetened)', regionCode: 'global', caloriesPer100g: 588, proteinG: 25, carbsG: 20, fatG: 50, fiberG: 6, commonServingG: 32, isMessFood: false, tags: ['vegetarian', 'vegan', 'high_protein', 'fats', 'no_cook'] },
+    { name: 'Whole Wheat Bread', regionCode: 'global', caloriesPer100g: 250, proteinG: 10, carbsG: 43, fatG: 4, fiberG: 5, commonServingG: 30, isMessFood: false, tags: ['vegetarian', 'vegan', 'carbs', 'no_cook'] },
+    { name: 'Rolled Oats (Raw)', regionCode: 'global', caloriesPer100g: 389, proteinG: 16.9, carbsG: 66, fatG: 6.9, fiberG: 10, commonServingG: 40, isMessFood: false, tags: ['vegetarian', 'vegan', 'breakfast', 'carbs', 'no_cook'] },
+    { name: 'Whey Protein Isolate', regionCode: 'global', caloriesPer100g: 375, proteinG: 85, carbsG: 3, fatG: 1, fiberG: 0, commonServingG: 30, isMessFood: false, tags: ['vegetarian', 'high_protein', 'supplement', 'no_cook'] },
+    { name: 'Soya Chunks (Dry)', regionCode: 'global', caloriesPer100g: 345, proteinG: 52, carbsG: 33, fatG: 0.5, fiberG: 13, commonServingG: 50, isMessFood: false, tags: ['vegetarian', 'vegan', 'high_protein', 'budget'] },
+    { name: 'Banana', regionCode: 'global', caloriesPer100g: 89, proteinG: 1.1, carbsG: 23, fatG: 0.3, fiberG: 2.6, commonServingG: 120, isMessFood: false, tags: ['vegetarian', 'vegan', 'snack', 'carbs', 'no_cook'] },
+    { name: 'Curd (Dahi)', regionCode: 'global', caloriesPer100g: 98, proteinG: 11, carbsG: 3.4, fatG: 4.3, fiberG: 0, commonServingG: 100, isMessFood: true, tags: ['vegetarian', 'snack', 'mess_staple', 'no_cook'] },
+    { name: 'Roasted Chana (Chickpeas)', regionCode: 'global', caloriesPer100g: 369, proteinG: 21, carbsG: 58, fatG: 5, fiberG: 12, commonServingG: 30, isMessFood: false, tags: ['vegetarian', 'vegan', 'snack', 'high_protein', 'no_cook'] },
+    { name: 'Milk (Toned)', regionCode: 'global', caloriesPer100g: 60, proteinG: 3.3, carbsG: 4.8, fatG: 3, fiberG: 0, commonServingG: 200, isMessFood: false, tags: ['vegetarian', 'breakfast', 'no_cook'] },
 ];
 
 export async function seedDatabase() {
     try {
         await connectDB();
 
-        console.log('🌱 Starting database seed check...');
+        console.log('🌱 Starting database seed (force-refresh)...');
 
-        const exerciseCount = await Exercise.countDocuments();
-        if (exerciseCount === 0) {
-            console.log(`Inserting ${seedExercises.length} foundational exercises...`);
-            await Exercise.insertMany(seedExercises);
-            console.log('✅ Exercises seeded successfully.');
-        } else {
-            console.log(`Exercises already seeded (${exerciseCount} items).`);
-        }
+        // Always drop and re-insert to fix any stale/broken data
+        await Exercise.deleteMany({});
+        console.log(`Inserting ${seedExercises.length} exercises...`);
+        await Exercise.insertMany(seedExercises);
+        console.log('✅ Exercises seeded successfully.');
 
-        const foodCount = await Food.countDocuments();
-        if (foodCount === 0) {
-            console.log(`Inserting ${seedFoods.length} foundational foods...`);
-            await Food.insertMany(seedFoods);
-            console.log('✅ Foods seeded successfully.');
-        } else {
-            console.log(`Foods already seeded (${foodCount} items).`);
-        }
+        await Food.deleteMany({});
+        console.log(`Inserting ${seedFoods.length} foods...`);
+        await Food.insertMany(seedFoods);
+        console.log('✅ Foods seeded successfully.');
 
     } catch (error) {
         console.error('❌ Error during database seeding:', error);
