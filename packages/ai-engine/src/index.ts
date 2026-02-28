@@ -24,11 +24,11 @@ export {
 // ─── Token Budget Management ─────────────────────────────────────
 
 const TOKEN_BUDGETS = {
-    workout_plan_generation: { input: 2500, output: 2000 },
-    nutrition_plan_generation: { input: 2000, output: 2500 },
-    weekly_review: { input: 1500, output: 800 },
-    coach_message: { input: 800, output: 300 },
-    constrained_chat: { input: 1200, output: 150 },
+    workout_plan_generation: { input: 2500, output: 8000 },
+    nutrition_plan_generation: { input: 2000, output: 8000 },
+    weekly_review: { input: 1500, output: 2000 },
+    coach_message: { input: 800, output: 500 },
+    constrained_chat: { input: 1200, output: 300 },
 };
 
 // ─── Gemini Client ───────────────────────────────────────────────
@@ -58,7 +58,7 @@ async function callGemini(
     let content = userMessage;
 
     if (retryContext) {
-        content = `${userMessage}\n\nPREVIOUS ATTEMPT HAD ERRORS:\n${retryContext}\nFix these errors in your response.`;
+        content = `${userMessage}\n\nPREVIOUS ATTEMPT HAD ERRORS:\n${retryContext}\nFix these errors in your response. Return ONLY valid JSON.`;
     }
 
     const response = await ai.models.generateContent({
@@ -67,19 +67,42 @@ async function callGemini(
         config: {
             systemInstruction: system,
             maxOutputTokens: maxTokens,
+            responseMimeType: 'application/json',
         },
     });
 
-    return response.text ?? '';
+    const text = response.text ?? '';
+    console.log(`[AI] Response length: ${text.length} chars, first 200: ${text.slice(0, 200)}`);
+    return text;
 }
 
 function parseJSON<T>(text: string): T {
-    // Extract JSON from response (may be wrapped in markdown code blocks)
-    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON found in AI response');
+    // Try direct parse first (when responseMimeType is application/json)
+    try {
+        return JSON.parse(text);
+    } catch {
+        // Not direct JSON, try extracting from markdown
+    }
 
-    const jsonStr = jsonMatch[1] || jsonMatch[0];
-    return JSON.parse(jsonStr);
+    // Try extracting from markdown code blocks
+    const jsonCodeBlock = text.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonCodeBlock) {
+        return JSON.parse(jsonCodeBlock[1]);
+    }
+
+    // Try finding a JSON object
+    const jsonObject = text.match(/\{[\s\S]*\}/);
+    if (jsonObject) {
+        return JSON.parse(jsonObject[0]);
+    }
+
+    // Try finding a JSON array
+    const jsonArray = text.match(/\[[\s\S]*\]/);
+    if (jsonArray) {
+        return JSON.parse(jsonArray[0]);
+    }
+
+    throw new Error(`No JSON found in AI response. Response starts with: "${text.slice(0, 100)}"`);
 }
 
 async function callWithRetry<T>(
