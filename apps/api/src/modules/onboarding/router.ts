@@ -3,11 +3,9 @@ import type { UCORequest } from '../../middleware/ucoLoader';
 import { saveUCO } from '../../middleware/ucoLoader';
 import { createUCO } from '@fitmind/user-context';
 import { SCOFF_THRESHOLD } from '@fitmind/shared-types';
+import { OnboardingProgress } from '../../models';
 
 export const onboardingRouter = Router();
-
-// In-memory partial UCO during onboarding (per user)
-const partialUCOs = new Map<string, Record<string, any>>();
 
 // POST /api/onboard/step/:stepNumber
 onboardingRouter.post('/step/:stepNumber', async (req: UCORequest & any, res) => {
@@ -23,8 +21,9 @@ onboardingRouter.post('/step/:stepNumber', async (req: UCORequest & any, res) =>
             });
         }
 
-        // Get or create partial UCO
-        const partial = partialUCOs.get(userId) || {};
+        // Get or create partial from MongoDB (persists across cold starts)
+        let progress = await OnboardingProgress.findOne({ userId });
+        const partial: Record<string, any> = progress?.partialData || {};
 
         // Process each step
         switch (step) {
@@ -105,7 +104,9 @@ onboardingRouter.post('/step/:stepNumber', async (req: UCORequest & any, res) =>
                 // Create full UCO with derived fields
                 const uco = createUCO(userId, partial as any);
                 await saveUCO(userId, uco);
-                partialUCOs.delete(userId);
+
+                // Clean up onboarding progress from MongoDB
+                await OnboardingProgress.deleteOne({ userId });
 
                 return res.json({
                     success: true,
@@ -123,13 +124,19 @@ onboardingRouter.post('/step/:stepNumber', async (req: UCORequest & any, res) =>
                 });
         }
 
-        partialUCOs.set(userId, partial);
+        // Persist partial progress to MongoDB (upsert)
+        await OnboardingProgress.findOneAndUpdate(
+            { userId },
+            { partialData: partial, lastStep: step, updatedAt: new Date() },
+            { upsert: true, new: true },
+        );
 
         res.json({
             success: true,
             data: { step, complete: false, nextStep: step + 1 },
         });
     } catch (err: any) {
+        console.error('[ONBOARD] Error:', err.message);
         res.status(500).json({
             success: false,
             error: { code: 'ONBOARDING_ERROR', message: err.message },
@@ -138,21 +145,34 @@ onboardingRouter.post('/step/:stepNumber', async (req: UCORequest & any, res) =>
 });
 
 // GET /api/onboard/resume — check onboarding status
-onboardingRouter.get('/resume', (req: UCORequest & any, res) => {
-    const userId = req.userId!;
+onboardingRouter.get('/resume', async (req: UCORequest & any, res) => {
+    try {
+        const userId = req.userId!;
 
-    if (req.uco) {
-        return res.json({ success: true, data: { complete: true, step: 7 } });
+        // If full UCO exists, onboarding is complete
+        if (req.uco) {
+            return res.json({ success: true, data: { complete: true, step: 7 } });
+        }
+
+        // Check MongoDB for partial progress
+        const progress = await OnboardingProgress.findOne({ userId }).lean() as any;
+        if (progress && progress.lastStep > 0) {
+            return res.json({
+                success: true,
+                data: { complete: false, step: progress.lastStep + 1 },
+            });
+        }
+
+        // No progress at all — start from step 1
+        res.json({
+            success: true,
+            data: { complete: false, step: 1 },
+        });
+    } catch (err: any) {
+        console.error('[ONBOARD] Resume error:', err.message);
+        res.json({
+            success: true,
+            data: { complete: false, step: 1 },
+        });
     }
-
-    const partial = partialUCOs.get(userId);
-    const completedSteps = partial
-        ? ['physical', 'goals', 'health', 'lifestyle', 'environment', 'nutrition']
-            .filter((key) => key in partial).length
-        : 0;
-
-    res.json({
-        success: true,
-        data: { complete: false, step: completedSteps + 1 },
-    });
 });

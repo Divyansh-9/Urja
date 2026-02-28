@@ -43,6 +43,23 @@ UserSchema.index({ username: 1 });
 
 export const User = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 
+// ─── Onboarding Progress (partial UCO stored between steps) ──────
+export interface IOnboardingProgress extends Document {
+    userId: mongoose.Types.ObjectId;
+    partialData: Record<string, any>;
+    lastStep: number;
+    updatedAt: Date;
+}
+
+const OnboardingProgressSchema = new Schema<IOnboardingProgress>({
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+    partialData: { type: Schema.Types.Mixed, default: {} },
+    lastStep: { type: Number, default: 0 },
+    updatedAt: { type: Date, default: Date.now },
+});
+
+export const OnboardingProgress = mongoose.models.OnboardingProgress || mongoose.model<IOnboardingProgress>('OnboardingProgress', OnboardingProgressSchema);
+
 // ─── User Context (UCO — versioned document) ─────────────────────
 export interface IUserContext extends Document {
     userId: mongoose.Types.ObjectId;
