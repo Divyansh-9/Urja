@@ -33,6 +33,13 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
 
         // Pre-filter exercises from DB (not AI)
         const allExercises = await Exercise.find().lean();
+        console.log(`[PLAN] DB exercises count: ${allExercises.length}`);
+        if (allExercises.length > 0) {
+            const sample = allExercises[0] as any;
+            console.log(`[PLAN] Sample exercise keys: ${Object.keys(sample).join(', ')}`);
+            console.log(`[PLAN] Sample exercise id field: "${sample.id}", name: "${sample.name}"`);
+        }
+
         const excludedTags = safetyResult?.requiredModifications
             ?.filter((m: any) => m.type === 'restrict_exercises')
             ?.flatMap((m: any) => m.params?.excludeTags || []) || [];
@@ -62,6 +69,18 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
         };
 
         const eligibleExercises = getEligibleExercises(allExercises as any[], constraints);
+        console.log(`[PLAN] Eligible exercises after filter: ${eligibleExercises.length}`);
+
+        // Build exercise ID list for AI — use name as fallback if id field is missing
+        let exerciseIdsForAI: string[];
+        if (eligibleExercises.length > 0) {
+            exerciseIdsForAI = eligibleExercises.map((e: any) => e.id || e.name);
+        } else {
+            // Fallback: if filter removes everything, send ALL exercises by name
+            console.log('[PLAN] WARNING: Filter removed all exercises, using full list as fallback');
+            exerciseIdsForAI = (allExercises as any[]).map((e: any) => e.id || e.name);
+        }
+        console.log(`[PLAN] Exercise IDs for AI (${exerciseIdsForAI.length}): ${exerciseIdsForAI.slice(0, 5).join(', ')}...`);
 
         // Pre-filter foods from DB
         const allFoods = await Food.find({ regionCode: { $in: [uco.nutrition.region, 'global'] } }).lean();
@@ -79,7 +98,7 @@ plansRouter.post('/generate', async (req: UCORequest & any, res) => {
                 weekNumber: uco.adaptive.weekNumber + 1,
             },
             constraints: {
-                allowedExerciseIds: eligibleExercises.map((e: any) => e.id),
+                allowedExerciseIds: exerciseIdsForAI,
                 excludedExerciseIds: [],
                 allowedFoodIds: allFoods.map((f: any) => f._id.toString()),
                 sessionLengthMins: sessionLengthOverride,
