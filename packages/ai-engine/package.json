@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@fitmind/shared-types": "workspace:*",
-        "@anthropic-ai/sdk": "^0.25.0"
+        "@google/genai": "^1.43.0"
     },
     "devDependencies": {
         "typescript": "^5.4.0",

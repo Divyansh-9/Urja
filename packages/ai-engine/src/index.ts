@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI } from '@google/genai';
 import type {
     PlanContext, WorkoutPlan, NutritionPlan,
     WeekReviewContext, WeekReview,
@@ -31,14 +31,14 @@ const TOKEN_BUDGETS = {
     constrained_chat: { input: 1200, output: 150 },
 };
 
-// ─── Claude Client ───────────────────────────────────────────────
+// ─── Gemini Client ───────────────────────────────────────────────
 
-let client: Anthropic | null = null;
+let client: GoogleGenAI | null = null;
 
-function getClient(): Anthropic {
+function getClient(): GoogleGenAI {
     if (!client) {
-        client = new Anthropic({
-            apiKey: process.env.ANTHROPIC_API_KEY,
+        client = new GoogleGenAI({
+            apiKey: process.env.GEMINI_API_KEY,
         });
     }
     return client;
@@ -46,35 +46,31 @@ function getClient(): Anthropic {
 
 // ─── Core API call with retry ────────────────────────────────────
 
-async function callClaude(
+async function callGemini(
     system: string,
     userMessage: string,
     maxTokens: number,
     retryContext?: string,
 ): Promise<string> {
-    const anthropic = getClient();
-    const model = process.env.AI_MODEL || 'claude-sonnet-4-20250514';
+    const ai = getClient();
+    const model = process.env.AI_MODEL || 'gemini-2.5-flash';
 
-    const messages: Anthropic.MessageParam[] = [
-        { role: 'user', content: userMessage },
-    ];
+    let content = userMessage;
 
     if (retryContext) {
-        messages[0] = {
-            role: 'user',
-            content: `${userMessage}\n\nPREVIOUS ATTEMPT HAD ERRORS:\n${retryContext}\nFix these errors in your response.`,
-        };
+        content = `${userMessage}\n\nPREVIOUS ATTEMPT HAD ERRORS:\n${retryContext}\nFix these errors in your response.`;
     }
 
-    const response = await anthropic.messages.create({
+    const response = await ai.models.generateContent({
         model,
-        max_tokens: maxTokens,
-        system,
-        messages,
+        contents: content,
+        config: {
+            systemInstruction: system,
+            maxOutputTokens: maxTokens,
+        },
     });
 
-    const textBlock = response.content.find((block) => block.type === 'text');
-    return textBlock?.text ?? '';
+    return response.text ?? '';
 }
 
 function parseJSON<T>(text: string): T {
@@ -97,7 +93,7 @@ async function callWithRetry<T>(
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-            const response = await callClaude(system, user, maxTokens, lastError ?? undefined);
+            const response = await callGemini(system, user, maxTokens, lastError ?? undefined);
             const parsed = parseJSON<T>(response);
             const validation = validate(parsed);
 
@@ -248,7 +244,7 @@ ${context.todaysPlan ? `Today: ${context.todaysPlan}` : ''}
 ${context.recentLogs ? `Recent: ${context.recentLogs}` : ''}
 Milestones: ${context.milestones.join(', ') || 'None yet'}`;
 
-    const response = await callClaude(system, user, TOKEN_BUDGETS.coach_message.output);
+    const response = await callGemini(system, user, TOKEN_BUDGETS.coach_message.output);
 
     return {
         type,
@@ -262,7 +258,7 @@ export async function answerPlanQuestion(
     planContext: string,
 ): Promise<ConstrainedAnswer> {
     const { system, user } = buildCoachChatPrompt(planContext, question);
-    const response = await callClaude(system, user, TOKEN_BUDGETS.constrained_chat.output);
+    const response = await callGemini(system, user, TOKEN_BUDGETS.constrained_chat.output);
 
     return {
         answer: response.trim(),
